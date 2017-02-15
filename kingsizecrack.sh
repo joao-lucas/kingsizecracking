@@ -31,8 +31,22 @@ function_verificar_diretorio(){
 	fi		
 }
 
+function_verificar_dependencias(){
+	if ! hash yad 2> /dev/null
+	then
+		echo "[ FALHA ] yad dialog não instalado!"
+		exit 1
+	fi
+
+	if ! hash aircrack-ng 2>/dev/null
+	then
+		echo "[ FALHA ] aircrack-ng não instalado!"
+		exit 1
+	fi		
+}
+
 function_about(){
-	yad --text="$TITLE \nversão $VERSION \n\nCracking WPA/WPA2 utilizando suite aircrack-ng e yad dialog \n\nSoftware sob a licença GNU GPL versão3 \nCodigo fonte disponível no Github \n<https://github.com/joao-lucas/Shell-script> \n\nAuthor: $AUTHOR" \
+	yad --text="$TITLE \nversão $VERSION \n\nCracking WPA/WPA2 utilizando suite aircrack-ng e yad dialog \n\nSoftware sob a licença GNU GPL versão3 \nCodigo fonte disponível no Github \n<https://github.com/joao-lucas/kingsizecracking> \n\nAuthor: $AUTHOR" \
 		--text-align=center \
                 --image gtk-about \
                 --image-on-top \
@@ -111,10 +125,13 @@ airodump-ng --bssid $BSSID --essid $ESSID --channel $CHANNEL \
 
 
 function_deauth(){
-	aireplay-ng --deauth 1 -a BSSID -e $ESSID $INTERFACE_MON | yad --title $TITLE \
+	aireplay-ng --deauth 1 -a $BSSID -e $ESSID $INTERFACE_MON | yad --title $TITLE \
 	--text-info \
 	--maximized \
 	--button-ok 
+
+	#aireplay-ng --deauth $DEAUTHTIME -a $Host_MAC --ignore-negative-one $INTERFACE_MON
+
 }
 
 function_injetar(){
@@ -133,13 +150,19 @@ function_quebrar(){
         --buttons-layout="center"
 }
 
+function_encerrar_todos_processos(){
+	killall aireplay-ng &> /dev/null
+	
+}
+
+
 function_menu(){
 	while true
 	do
 		MENU=$(yad --title "$TITLE" \
 			--list \
 			--text="King Size Cracking WPA/WPA2 \n$DATE \n\nAuthor: João lucas" \
-			--column="Icones:IMG" \
+			--column=" :IMG" \
 			--column="Opção" \
 			--column="Descrição" \
 			--image emblem-debian \
@@ -167,11 +190,12 @@ function_menu(){
 		"Injetar") function_injetar ;;
 		"Quebrar") function_quebrar ;; 
 		"Sobre") function_about ;;
-		"Sair") exit 0 ;;
+		"Sair")function_encerrar_todos_processos; exit 0 ;;
 	esac
 done
 }
 
+function_verificar_dependencias
 function_verificar_usuario
 function_verificar_diretorio
 function_menu
