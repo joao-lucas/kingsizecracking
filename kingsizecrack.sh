@@ -6,7 +6,9 @@ AUTHOR="João Lucas <joaolucas@linuxmail.org>"
 VERSION="0.1"
 LICENSE="GPL"
 OUTPUT="Capturas"
-
+INTERFACE="wlan0"
+INTERFACE_MON="wlan0mon"
+WORD_LIST="/usr/share/wordlists/fern-wifi/common.txt"
 
 function_verificar_usuario(){
 	if [ `id -u` != "0" ] 
@@ -66,9 +68,9 @@ function_modo_monitoramento(){
 }
 
 function_escanear_todas_redes(){
-	airodump-ng $INTERFACE_MON | yad --tile "$TITLE" \
-	--text-info \
+	airodump-ng $INTERFACE_MON | yad --title "$TITLE" \
 	--text="Anote ESSID, BSSID e CHANNEL" \
+	--text-info \
 	--image find \
 	--image-on-top \
 	--maximized \
@@ -82,9 +84,9 @@ function_setar_parametros(){
 	--field "BSSID" "" \
 	--field "ESSID" "" \
 	--field "Channel" "" \
-	--field "Interface Mon" "eth0mon" \
+	--field "Interface Mon" "wlan0mon" \
 	--field "Salvar em" "$DATE.cap" \
-	--field "[ Wordlist ]":BTN "yad --file --maximized" \
+	#--field "[ Wordlist ]":BTN "yad --file --maximized" \
 	#--field "[ Salvar na pasta ]":BTN "yad --title $TITLE --maximized --file --directory" \
 	--button gtk-cancel \
 	--button gtk-ok );
@@ -99,7 +101,7 @@ function_setar_parametros(){
 
 function_escanear_uma_rede(){
 
-if [ -z $BSSID ] || [ -z $ESSID ] || [ -z $CHANNEL ] || [ -z $INTERFACE_MON ] || [ ! -e $ARQ ]
+if [ -z $BSSID ] || [ -z $ESSID ] || [ -z $CHANNEL ] || [ -z $INTERFACE_MON ] || [ -z $ARQ ]
 then
 		yad --text="Você deve setar os parametros para fazer o escaneamento!" \
 		--text-align=center \
