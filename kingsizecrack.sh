@@ -221,6 +221,7 @@ function_menu(){
 		"Sair") function_encerrar_todos_processos; exit 0 ;;
 	esac
 done
+
 }
 
 function_verificar_dependencias
