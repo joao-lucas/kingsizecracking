@@ -8,19 +8,22 @@ LICENSE="GPL"
 OUTPUT="Capturas"
 INTERFACE="wlp1s0"
 INTERFACE_MON="wlp1s0mon"
-WORD_LIST="/usr/share/wordlists/fern-wifi/common.txt"
+WORDLIST="/home/joao_lucas/wordlists/rockyou.txt"
+ARQ="25-02-2017-12-50.cap-01.cap"
 
 function_verificar_usuario(){
 	if [ `id -u` != "0" ] 
 	then
 		yad --title="$TITLE" \
 		--text="Execute o script como root!" \
-		--image error \
-		--image-on-top \
+		--text-align=center \
+                --image error \
+                --image-on-top \
+                --undecorated \
+                --buttons-layout=center \
+                --button gtk-ok \
 		--timeout=5 \
-		--timeout-indicador=button \
-		--button gtk-ok \
-		--center
+		--center	
 		exit 1	
 	fi
 }
@@ -57,11 +60,11 @@ function_about(){
 	yad --text="$TITLE \nversao $VERSION \n\nCracking WPA/WPA2 utilizando suite aircrack-ng e yad dialog \n\nSoftware sob a licenca GNU GPL versao 3 \nCodigo fonte disponivel no Github \n<https://github.com/joao-lucas/kingsizecracking> \n\nAuthor: $AUTHOR" \
 		--text-align=center \
                 --image gtk-about \
+                --no-markup \
                 --image-on-top \
                 --button gtk-close \
-                --no-markup \
                 --undecorated \
-                --buttons-layout="center" \
+                --buttons-layout=center \
 		--center &
 }
 
@@ -69,8 +72,10 @@ function_about(){
 function_modo_monitoramento(){
 	airmon-ng start $INTERFACE | yad --title "$TITLE" \
 	--text-info \
+	--undecorated \
 	--maximized \
-	--button gtk-ok	
+	--button gtk-ok	\
+	--buttons-layout=center
 }
 
 function_escanear_todas_redes(){
@@ -79,29 +84,30 @@ function_escanear_todas_redes(){
 	#--text="Anote ESSID, BSSID e CHANNEL" \
 	#--maximized \
 	#--button gtk-ok
-	xfce4-terminal -e "airodump-ng $INTERFACE_MON" & 
+	xfce4-terminal -e "airodump-ng $INTERFACE_MON" &
 }
 
 function_setar_parametros(){
 	PARAMETROS=$(yad --title "$TITLE" \
 	--form \
-	--center \
 	--field "BSSID" "" \
 	--field "ESSID" "" \
 	--field "Channel" "" \
 	--field "Interface Mon" "wlp1s0mon" \
-	--field "Salvar em" "$DATE.cap" \
+	#--field "Salvar em" "$DATE.cap" \
 	#--field "[ Wordlist ]":BTN "yad --file --maximized" \
 	#--field "[ Salvar na pasta ]":BTN "yad --title $TITLE --maximized --file --directory" \
-	--button gtk-cancel \
-	--button gtk-ok & )
+	--button ok \
+	--button cancel \
+	--undecorated \
+	--center & )
 	
 	BSSID=$(echo "$PARAMETROS" | cut -d '|' -f 1)
 	ESSID=$(echo "$PARAMETROS" | cut -d '|' -f 2)
 	CHANNEL=$(echo "$PARAMETROS" | cut -d '|' -f 3)
 	INTERFACE_MON=$(echo "$PARAMETROS" | cut -d '|' -f 4)	
 	#DIR=$(echo "$PARAMETROS" | cut -d '|' -f 5)
-	ARQ=$(echo "$PARAMETROS" | cut -d '|' -f 5)
+	#ARQ=$(echo "$PARAMETROS" | cut -d '|' -f 5)
 }
 
 function_escanear_uma_rede(){
@@ -160,7 +166,7 @@ function_injetar(){
 } 
 
 function_quebrar(){
-	if [ ! -e $WORD_LIST ]; then
+	if [ ! -e $WORDLIST ]; then
 	      	yad --text="Voce deve setar uma Wordlist!" \
 		--text-align=center \
                 --image gtk-error \
@@ -169,13 +175,19 @@ function_quebrar(){
                 --undecorated \
                 --buttons-layout="center" \
 		--center
+
+		function_menu
 	fi	
 
-        aircrack-ng -w $WORD_LIST $ARQ | yad --title $TITLE \
-	--text-info \
-	--maximized \
-	--button gtk-ok \
-        --buttons-layout="center"
+        xfce-terminal -e "aircrack-ng -w i$WORDLIST $OUTPUT/$ARQ"
+	#cat passwd | grep "KEY FOUND"
+	#| cut -d "[" -f4 | cut -d ']' -f1 | uniq | yad --text-info --button ok --button-layout center -title "Senha do Access Point"
+	
+	#| yad --title $TITLE \
+	#--text-info \
+	#--maximized \
+	#--button gtk-ok \
+        #--buttons-layout="center"
 }
 
 function_encerrar_todos_processos(){
@@ -189,21 +201,22 @@ function_menu(){
 	do
 		MENU=$(yad --title "$TITLE" \
 			--list \
-			--text="King Size Cracking WPA/WPA2 \n$DATE \n\nAuthor: $AUTHOR" \
+			--text="\nKing Size Cracking\n" \
 			--column=" :IMG" \
 			--column="Opcao" \
 			--column="Descricao" \
-			--image emblem-debian \
+			--window-icon="gtk-connect" \
+			--image gtk-index \
 			--image-on-top \
 			--maximized \
 			--no-buttons \
 			find "Monitor" "Ativar modo monitoramento" \
 			find "Escanear" "Escanear todas redes alcancadas" \
-			img "Setar" "Parametros para o ataque" \
+			gtk-edit "Setar" "Parametros para o ataque" \
 			find "Escanear uma rede" "Escanear apenas uma rede especifica" \
-			emblem-debian "Deauth" "Fazer desautenticacao dos hosts no AP" \
-			emblem-debian "Injetar" "Injetar pacotes no AP" \
-			emblem-debian "Quebrar" "Tentar quebrar a senha com forca bruta" \
+			gtk-execute "Deauth" "Fazer desautenticacao dos hosts no AP" \
+			gtk-execute "Injetar" "Injetar pacotes no AP" \
+			gtk-execute "Quebrar" "Tentar quebrar a senha com forca bruta" \
 			gtk-about "Sobre" "Informacoes sobre o script" \
 			gtk-quit "Sair" "Sair do script")
 
