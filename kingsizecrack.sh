@@ -142,7 +142,7 @@ fi
 
 
 function_deauth(){
-	aireplay-ng -0 1 -a $BSSID $INTERFACE_MON | yad --title $TITLE \
+	aireplay-ng --deauth 0 -a $BSSID $INTERFACE_MON | yad --title $TITLE \
 	--text-info \
 	--maximized \
 	--button-ok 
@@ -179,7 +179,7 @@ function_quebrar(){
 		function_menu
 	fi	
 
-        xfce-terminal -e "aircrack-ng -w i$WORDLIST $OUTPUT/$ARQ"
+        aircrack-ng -w $WORDLIST $OUTPUT/$ARQ
 	#cat passwd | grep "KEY FOUND"
 	#| cut -d "[" -f4 | cut -d ']' -f1 | uniq | yad --text-info --button ok --button-layout center -title "Senha do Access Point"
 	
