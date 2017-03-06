@@ -26,6 +26,7 @@ function_verificar_usuario(){
 		--center	
 		exit 1	
 	fi
+
 }
 
 function_verificar_diretorio(){
