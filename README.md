@@ -16,3 +16,11 @@
 
 ## Tentar quebrar senha
 ![5](https://github.com/joao-lucas/kingsizecracking/blob/master/screenshots/5-cracking.png)
+https://github.com/joao-lucas/kingsizecracking
+
+## Instalacao
+### Generica
+git clone https://github.com/joao-lucas/kingsizecracking
+cd kingsizecracking
+chmod 764 kingsizecrack.sh
+sudo bash kingsizecrack.sh
