@@ -20,7 +20,7 @@ https://github.com/joao-lucas/kingsizecracking
 
 ## Instalacao
 ### Generica
-git clone https://github.com/joao-lucas/kingsizecracking
-cd kingsizecracking
-chmod 764 kingsizecrack.sh
-sudo bash kingsizecrack.sh
+	git clone https://github.com/joao-lucas/kingsizecracking
+	cd kingsizecracking
+	chmod 764 kingsizecrack.sh
+	sudo bash kingsizecrack.sh
