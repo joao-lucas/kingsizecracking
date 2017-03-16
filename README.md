@@ -16,11 +16,23 @@
 
 ## Tentar quebrar senha
 ![5](https://github.com/joao-lucas/kingsizecracking/blob/master/screenshots/5-cracking.png)
-https://github.com/joao-lucas/kingsizecracking
 
 ## Instalacao
-### Generica
+
+### Arch Linux
 	git clone https://github.com/joao-lucas/kingsizecracking
 	cd kingsizecracking
-	chmod 764 kingsizecrack.sh
+	sudo chmod 764 kingsizecrack.sh arch-install.sh
+	sudo bash arch-install.sh
 	sudo bash kingsizecrack.sh
+
+### Debian like
+	git clone https://github.com/joao-lucas/kingsizecracking
+	cd kingsizecracking
+	chmod 764 kingsizecrack.sh debian-install.sh
+	sudo bash debian-install.sh
+	sudo bash kingsizecrack.sh
+
+## License
+
+[MIT License](https://opensource.org/licenses/MIT) © Joao Lucas
